@@ -1,0 +1,34 @@
+### first login 
+admin admin or admin Pass1234567!
+
+### than run in ~\backend-java\VibeAIN1PXL
+
+# Brecht
+mvn clean verify sonar:sonar `
+  '-Dsonar.projectKey=VibeApp' `
+  '-Dsonar.host.url=http://localhost:9000' `
+  '-Dsonar.token=sqp_b6f66a46a43e07500fe43ff4fb5b506619824e10'
+
+
+#Milan
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=VibeApp \
+  -Dsonar.projectName='VibeApp' \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=sqp_fa708e9a93e17cbf9a5cef9f0dd45e0962a229d9
+
+### Look at report 
+
+
+
+
+1. Change token
+2. Click on "Create a local project".
+3. Display name: "VibeApp"
+4. Click "Next"
+5. Click "Use the global setting"
+6. Click "Create project"
+7. Open project
+8. Click "Locally"
+9. Keep the settings and click on "Generate"
+10. Copy token and click on "Continue"
