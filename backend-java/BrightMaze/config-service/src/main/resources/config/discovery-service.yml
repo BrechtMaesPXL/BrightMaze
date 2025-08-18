@@ -1,0 +1,17 @@
+server:
+  port: 8061
+
+eureka:
+  instance:
+    hostname: discovery-service
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://discovery-service:8061/eureka/
+
+spring:
+  config:
+    import: "optional:configserver:http://config-service:8088"
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

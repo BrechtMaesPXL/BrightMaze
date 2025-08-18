@@ -1,0 +1,58 @@
+server:
+  port: 8095
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+spring:
+  cloud:
+
+    client:
+      hostname: localhost
+    gateway:
+      globals:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+              - "http://localhost:5173"
+              - "*"
+            allowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
+            allowedHeaders:
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+              - "Accept"
+            allowCredentials: false
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: post-service
+          uri: lb://post-service
+          predicates:
+            - Path=/post/**
+          filters:
+            - RewritePath=/post/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@remoteAddrKeyResolver}"
+
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin/**
+          filters:
+            - RewritePath=/admin/(?<path>.*), /$\{path}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/

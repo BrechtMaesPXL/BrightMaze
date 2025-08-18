@@ -1,0 +1,78 @@
+server:
+  port: 8095
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+
+spring:
+  application:
+    name: gateway-service  # Cruciale toevoeging voor service discovery
+  data:
+    redis:
+      host: redis
+      port: 6379
+  cloud:
+    client:
+      hostname: localhost
+    gateway:
+      globals:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+              - "*"
+            allowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
+            allowedHeaders:
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+              - "Accept"
+            allowCredentials: false
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true  # Consistentie in service naming
+      routes:
+        - id: post-service
+          uri: lb://post-service
+          predicates:
+            - Path=/post/**
+          filters:
+            - RewritePath=/post/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 10
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@remoteAddrKeyResolver}"
+
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin/**
+          filters:
+            - RewritePath=/admin/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter  # Toegevoegd voor consistentie
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 10  # Lagere burst voor admin
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@remoteAddrKeyResolver}"
+
+eureka:
+  client:
+    register-with-eureka: true  # Expliciet maken
+    fetch-registry: true        # Expliciet maken
+    serviceUrl:
+      defaultZone: http://discovery-service:8061/eureka/
+    healthcheck:
+      enabled: true             # Voor betere health checks
+  instance:
+    hostname: gateway-service   # Aanbevolen voor docker/netwerken
+    preferIpAddress: false      # Gebruik hostname zoals geconfigureerd
+    instanceId: ${spring.application.name}:${server.port}
