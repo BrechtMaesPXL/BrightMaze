@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build microservice JARs
-cd ./backend-java/ContentCreaterUploader
+cd ./backend-java/BrightMaze
 mvn clean package 
 
 # Go back to the root directory

@@ -1,24 +1,4 @@
 
-#List of used ports:
-# Backend:
-# 8061 - discovery-service
-# 8075 - fastapi_app (FastAPI chatbot)
-# 8088 - config-service
-# 8092 - post-service
-# 8093 - admin-service
-# 8095 - gateway-service
-# Frontend:
-# 5173 - frontend-admin
-# 5174 - frontend-chat
-# Databases:
-# 27017 - events-database (MongoDB)
-# 3310 - admin-database (MySQL)
-# 8000 - chroma-database (ChromaDB)
-# Other:
-# 15672 - RabbitMQ management UI
-# 5672 - RabbitMQ (AMQP protocol)
-
-# 6379 - redis
 
 networks:
   my-network:
@@ -92,7 +72,7 @@ services:
 
   config-service:
     build:
-      context: ./backend-java/ContentCreaterUploader/config-service
+      context: ./backend-java/BrightMaze/config-service
     # image: config-service
     container_name: config-service
     ports:
@@ -107,7 +87,7 @@ services:
 
   discovery-service:
     build:
-      context: ./backend-java/ContentCreaterUploader/discovery-service
+      context: ./backend-java/BrightMaze/discovery-service
     # image: discovery-service
     container_name: discovery-service
     depends_on:
@@ -127,7 +107,7 @@ services:
 
   gateway-service:
     build:
-      context: ./backend-java/ContentCreaterUploader/gateway-service
+      context: ./backend-java/BrightMaze/gateway-service
     # image: gateway-service:latest
     container_name: gateway-service
     depends_on:
@@ -151,7 +131,7 @@ services:
 
   post-service:
     build:
-      context: ./backend-java/ContentCreaterUploader/post-Service
+      context: ./backend-java/BrightMaze/post-Service
     # image: post-service:latest
     container_name: post-service
     depends_on:
@@ -168,7 +148,7 @@ services:
 
   admin-service:
     build:
-      context: ./backend-java/ContentCreaterUploader/admin-service
+      context: ./backend-java/BrightMaze/admin-service
     # image: admin-service:latest
     container_name: admin-service
     depends_on:
@@ -222,22 +202,38 @@ services:
       - my-network
 
 
-  frontend-chat:
+  # frontend-chat:
+  #   build:
+  #     context: ./frontend-chat/vibe-chat
+  #   ports:
+  #     - "5174:5174"
+  #   volumes:
+  #     - ./frontend-chat/vibe-chat:/app
+  #     - /app/node_modules
+  #   command: npm run dev -- --host 0.0.0.0
+  #   environment:
+  #     - NODE_ENV=development
+  #     - VITE_API_BASE_URL=http://localhost:8095/
+  #   working_dir: /app
+  #   networks:
+  #     - my-network
+  frontend:
     build:
-      context: ./frontend-chat/vibe-chat
+      context: ./Frontend/BrightMazeEntertainment
+      dockerfile: Dockerfile
     ports:
       - "5174:5174"
     volumes:
-      - ./frontend-chat/vibe-chat:/app
-      - /app/node_modules
-    command: npm run dev -- --host 0.0.0.0
+      - ./Frontend/BrightMazeEntertainment/src:/app/src
     environment:
       - NODE_ENV=development
-      - VITE_API_BASE_URL=http://localhost:8095/
-    working_dir: /app
+  #     - VITE_API_BASE_URL=http://localhost:8095/
+
+      # - VITE_API_URL=http://backend:8000
+    # depends_on:
+    #   - backend
     networks:
       - my-network
-
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
