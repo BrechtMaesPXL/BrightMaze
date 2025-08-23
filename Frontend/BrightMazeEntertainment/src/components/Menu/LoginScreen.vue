@@ -27,14 +27,18 @@
 }
 
 .v-btn{
-  color: white;
-  background-color: #e98616 !important;
+  color: #00f0ff;
+  background-color: #ff0099 !important;
+  letter-spacing: 1px;
+
+  box-shadow: 0 0 15px #ff33cc, 0 0 30px #ff0099;
+
 }
 .v-card{
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.85);
 }
 .v-text-field{
-  color: #e98616;
+  color: #ff0099;
 }
 .v-card__title{
   text-transform: uppercase
@@ -43,7 +47,9 @@
 .headline{
   text-align: center;
   margin: 1vw;
-  color: #e98616 !important;
+  color: #ff0099 !important;
+  text-shadow: 0 0 8px #ff0099, 0 0 16px #ff0099, 0 0 24px #932f68;
+
 }
 
 

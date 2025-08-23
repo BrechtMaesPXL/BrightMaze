@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Poort voor Vite dev server
-EXPOSE 5173
+EXPOSE 5174
 
 # Start commando
 CMD ["npm", "run", "dev"]

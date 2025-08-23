@@ -1,6 +1,7 @@
 // stores/user.js
 import axios from 'axios'
 import { defineStore } from 'pinia'
+import { API_URL_ADMIN } from '@/config/api.js'
 
 const API_URL = 'http://127.0.0.1:8000'
 
@@ -17,20 +18,19 @@ export const useUserStore = defineStore('user', {
   },
 
   actions: {
-    async login({ username, password }) {
-      const form = new URLSearchParams()
-      form.append('username', username)
-      form.append('password', password)
+    async login({ email, password }) {
+      const user = {
+        email: email,
+        password: password
+      }
+      const response = await axios.post(API_URL_ADMIN + 'login', user);
+      const { access_token } = response.data
 
-      this.username = username
-
-      const response = await axios.post(`${API_URL}/token`, form, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-      const { access_token, token_type } = response.data
+      if (response.status === 200) {
+        localStorage.setItem('token', JSON.stringify(access_token.token));
+      }
 
       this.token = access_token
-      localStorage.setItem('token', access_token)
     },
 
     logout() {

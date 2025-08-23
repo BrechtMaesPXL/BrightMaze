@@ -15,10 +15,10 @@ export default {
 
   <div id="app">
 
-    <h1>Wildfires</h1>
+    <h1 class="logo-text">Bright Maze Entertainment</h1>
     <div id="buttons">
-      <v-btn @click="step = 1">login</v-btn>
-      <v-btn @click="step = 2">register</v-btn>
+      <v-btn @click="step = 1" class="neon-btn">login</v-btn>
+      <v-btn @click="step = 2" class="neon-btn">register</v-btn>
     </div>
 
     <v-window v-model="step">
@@ -40,7 +40,7 @@ body, html {
 }
 
 #app {
-  background-image: url('https://demos.codezeel.com/wordpress/WP02/WP031/default/wp-content/uploads/2024/09/main-banner-1.jpg');
+  background-image: url("https://wallpapercave.com/w/wp13852284.jpg");
   background-size: cover;
   background-position: center center;
   min-height: 100vh;
@@ -55,24 +55,31 @@ body, html {
   margin-top: 20px;
 }
 
-.v-btn {
-  margin-left: 10px;
-  margin-right: 10px;
-  background-color: #e98616 !important;
-  color: white !important;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
 
-h1 {
+.logo-text {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  color: orange;
+  top: 30px;
+  left: 30px;
   font-size: 3rem;
   font-weight: bold;
-  margin: 0;
+  color: #00f0ff;
+  text-shadow: 0 0 8px #00f0ff, 0 0 16px #00cfff, 0 0 24px #0099ff;
   z-index: 10;
+}
+.neon-btn {
+  margin: 0 15px;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #00f0ff !important;
+  background: #ff0099;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 15px #ff33cc, 0 0 30px #ff0099;
+  transition: all 0.3s ease-in-out;
+}
+.neon-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff33cc, 0 0 30px #ff0099;
 }
 </style>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { BASE_URL} from "@/config/api.js";
+import { API_URL_LOG } from '@/config/api.js'
 
 export const useFireStore = defineStore('fire', {
   state: () => ({
@@ -27,7 +27,7 @@ export const useFireStore = defineStore('fire', {
 
       try {
         const token = localStorage.getItem('token');
-        let baseUrl = BASE_URL || 'http://localhost:8000';
+        let baseUrl = API_URL_LOG || 'http://localhost:8000';
         if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
         if (baseUrl.includes('backend')) baseUrl = baseUrl.replace('backend', 'localhost');
 
