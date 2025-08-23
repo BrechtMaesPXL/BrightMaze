@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="683cce1c-10f6-4312-8542-899198697311" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/BrightMazeEntertainment/src/config/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/BrightMazeEntertainment/src/config/api.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ContentCreaterUploader.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BrightMaze.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/BrightMazeEntertainment/src/views/AuthenticationView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/BrightMazeEntertainment/src/views/AuthenticationView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,12 +27,13 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "feature/mainScreen",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/brech/Desktop/Project/BrightMaze",
+    "last_opened_file_path": "C:/Users/brech/Desktop/Project/BrightMaze/backend-java/BrightMaze",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\brech\\Desktop\\Project\\BrightMaze\\Frontend\\BrightMazeEntertainment\\node_modules\\prettier",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -54,6 +55,7 @@
       <updated>1750537754265</updated>
       <workItem from="1750537755386" duration="26000" />
       <workItem from="1755906217885" duration="322000" />
+      <workItem from="1755963141027" duration="155000" />
     </task>
     <servers />
   </component>

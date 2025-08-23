@@ -2,17 +2,15 @@
   <div class="page-wrapper">
     <Navigation />
 
-    <!-- Welcome Section -->
     <div class="container">
       <div class="welcome-text">
         <h1>Welcome {{ userStore.username }},</h1>
-        <h1>Find interesting Data over USA wildfires here.</h1>
+        <h1>The house is your's; Lose to your friends.</h1>
       </div>
     </div>
 
-    <!-- Cards Map Section -->
     <div class="content-section">
-      <h2>Interesting maps:</h2>
+      <h2>Top Games</h2>
       <div
         class="scrollList"
         @mousedown="startDrag"

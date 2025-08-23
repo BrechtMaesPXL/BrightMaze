@@ -8,10 +8,10 @@ function logout() {
 
 <template>
   <nav>
-    <RouterLink to="/"><h1>Wildfires</h1></RouterLink>
+    <RouterLink to="/"><h1>BME</h1></RouterLink>
     <ul>
-      <li><RouterLink to="/home">Home</RouterLink></li>
-      <li><RouterLink to="/insights">Insights</RouterLink></li>
+      <li><RouterLink to="/home">Games</RouterLink></li>
+      <li><RouterLink to="/insights">Profile</RouterLink></li>
 
       <li><RouterLink @click="logout" to="/">Log out</RouterLink></li>
     </ul>
