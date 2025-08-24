@@ -30,7 +30,8 @@
 		<module>gateway-service</module>
 		<module>post-Service</module>
 		<module>admin-service</module>
-	</modules>
+        <module>wallet-service</module>
+    </modules>
 
 	<scm>
 		<connection/>

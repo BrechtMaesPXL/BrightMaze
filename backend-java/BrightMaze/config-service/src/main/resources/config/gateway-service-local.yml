@@ -53,6 +53,13 @@ spring:
           filters:
             - RewritePath=/admin/(?<path>.*), /$\{path}
 
+        - id: wallet-service
+          uri: lb://wallet-service
+          predicates:
+            - Path=/wallet/**
+          filters:
+            - RewritePath=/wallet/(?<path>.*), /$\{path}
+
 eureka:
   client:
     serviceUrl:

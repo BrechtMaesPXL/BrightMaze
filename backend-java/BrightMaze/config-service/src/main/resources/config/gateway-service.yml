@@ -63,6 +63,18 @@ spring:
                 redis-rate-limiter.burstCapacity: 10  # Lagere burst voor admin
                 redis-rate-limiter.requestedTokens: 1
                 key-resolver: "#{@remoteAddrKeyResolver}"
+        - id: wallet-service
+          uri: lb://wallet-service
+          predicates:
+            - Path=/wallet/**
+          filters:
+            - RewritePath=/wallet/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter  # Toegevoegd voor consistentie
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 10  # Lagere burst voor admin
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@remoteAddrKeyResolver}"
 
 eureka:
   client:

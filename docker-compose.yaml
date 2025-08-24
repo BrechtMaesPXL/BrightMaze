@@ -162,7 +162,23 @@ services:
       - "8093:8093"
     networks:
       - my-network
-
+  wallet-service:
+    build:
+      context: ./backend-java/BrightMaze/wallet-service
+    # image: admin-service:latest
+    container_name: wallet-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      admin-database:
+        condition: service_healthy
+    environment:
+      - SPRING_APPLICATION_NAME=wallet-service
+    ports:
+      - "8110:8110"
+    networks:
+      - my-network
+      
   fastapi_app:
     build:
       context: ./chatbot/app  # Dit is de relatieve map vanuit je docker-compose.yml
