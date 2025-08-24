@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  fastapi_app:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8075:8000"  # Map poort 8000 van de container naar poort 8075 op de host
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8000  # Stel de poort in waarop de FastAPI-applicatie draait
+    volumes:
+      - .:/app  # Koppelt de huidige directory naar de container (optie voor development)
+    restart: unless-stopped  # Zorg ervoor dat de container herstart wanneer deze stopt, tenzij handmatig gestopt

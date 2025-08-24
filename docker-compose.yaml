@@ -1,0 +1,274 @@
+
+
+networks:
+  my-network:
+    name: my-network
+services:
+  events-database:
+    image: mongo:latest
+    container_name: events_db
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - my-network
+    command: [ "--noauth" ]
+
+
+  admin-database:
+    image: mysql:8.0
+    container_name: admin_db
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_DATABASE: admin_db
+    ports:
+      - "3310:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - admin_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+    networks:
+      - my-network
+
+  chroma-database:
+    build:
+      context: ./chatbot/app
+      dockerfile: ./docker/chroma/Dockerfile
+    container_name: chroma-server
+    volumes:
+      - chroma-data:/chroma
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "curl -f http://localhost:8000/api/v2/heartbeat"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    networks:
+      - my-network
+
+
+
+  message-broker:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq_broker
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 3
+
+
+  config-service:
+    build:
+      context: ./backend-java/BrightMaze/config-service
+    # image: config-service
+    container_name: config-service
+    ports:
+      - "8088:8088"
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8088/actuator/health" ]
+      interval: 10s
+      retries: 5
+
+
+  discovery-service:
+    build:
+      context: ./backend-java/BrightMaze/discovery-service
+    # image: discovery-service
+    container_name: discovery-service
+    depends_on:
+      config-service:
+        condition: service_healthy
+    environment:
+      - SPRING_APPLICATION_NAME=discovery-service
+    ports:
+      - "8061:8061"
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8061/actuator/health" ]
+      interval: 10s
+      retries: 5
+
+
+  gateway-service:
+    build:
+      context: ./backend-java/BrightMaze/gateway-service
+    # image: gateway-service:latest
+    container_name: gateway-service
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    environment:
+      - SPRING_APPLICATION_NAME=gateway-service
+    ports:
+      - "8095:8095"
+    networks:
+      - my-network
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+
+  post-service:
+    build:
+      context: ./backend-java/BrightMaze/post-Service
+    # image: post-service:latest
+    container_name: post-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    environment:
+      - SPRING_APPLICATION_NAME=post-service
+      - PYTHON_SERVICE_URL=http://fastapi_app:8001
+      - UPLOAD_DIR=/app/uploads
+    ports:
+      - "8092:8092"
+    networks:
+      - my-network
+
+  admin-service:
+    build:
+      context: ./backend-java/BrightMaze/admin-service
+    # image: admin-service:latest
+    container_name: admin-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      admin-database:
+        condition: service_healthy
+    environment:
+      - SPRING_APPLICATION_NAME=admin-service
+    ports:
+      - "8093:8093"
+    networks:
+      - my-network
+
+  fastapi_app:
+    build:
+      context: ./chatbot/app  # Dit is de relatieve map vanuit je docker-compose.yml
+      dockerfile: ./docker/chatbot/Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8075:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8001
+      - SPRING_BOOT_BASE_URL=http://gateway-service:8095
+      - CHROMA_HOST=chroma-server
+      - CHROMA_PORT=8000
+    volumes:
+      - ./chatbot/app:/app
+    restart: unless-stopped
+    depends_on:
+      chroma-database:
+        condition: service_healthy
+    networks:
+      - my-network
+
+  frontend-admin:
+    build:
+      context: ./frontend-admin/vibe-admin
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend-admin/vibe-admin:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8095/
+      - NODE_ENV=development
+    working_dir: /app
+    networks:
+      - my-network
+
+
+  # frontend-chat:
+  #   build:
+  #     context: ./frontend-chat/vibe-chat
+  #   ports:
+  #     - "5174:5174"
+  #   volumes:
+  #     - ./frontend-chat/vibe-chat:/app
+  #     - /app/node_modules
+  #   command: npm run dev -- --host 0.0.0.0
+  #   environment:
+  #     - NODE_ENV=development
+  #     - VITE_API_BASE_URL=http://localhost:8095/
+  #   working_dir: /app
+  #   networks:
+  #     - my-network
+  frontend:
+    build:
+      context: ./Frontend/BrightMazeEntertainment
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./Frontend/BrightMazeEntertainment/src:/app/src
+    environment:
+      - NODE_ENV=development
+  #     - VITE_API_BASE_URL=http://localhost:8095/
+
+      # - VITE_API_URL=http://backend:8000
+    # depends_on:
+    #   - backend
+    networks:
+      - my-network
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - my-network
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONAR_SEARCH_JAVAADDITIONALOPTS=-Dnode.store.allow_mmap=false
+      - SONAR_CE_JAVAOPTS=-Xmx512m -Xms128m
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/api/system/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 2m
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '1'
+volumes:
+  post_data:
+  admin_data:
+  mongodb_data:
+  chroma-data:
+  sonarqube_data:
+  sonarqube_extensions:
